@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:15
+    container_name: health_db
+    environment:
+      POSTGRES_DB: health
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+
+  backend:
+    build: ./backend
+    container_name: health_backend
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/health
+      SECRET_KEY: supersecret
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    container_name: health_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
